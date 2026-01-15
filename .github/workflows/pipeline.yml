@@ -1,0 +1,33 @@
+name: CI-without-DB
+
+on:
+    push:
+        branches: [main]
+    pull_request:
+
+jobs:
+    pipeline:
+        runs-on: ubuntu-latest
+
+        steps:
+            - uses: actions/checkout@v4
+            - uses: actions/setup-node@v4
+              with:
+                node-version: 20
+            # Backend
+            - name: Install backend dependencies
+              run: npm ci
+            - name: Backend lint
+              run: npm run lint
+            - name: Backend tests without DB
+              run: npm run test:no-db
+            # Frontend
+            - name: Install frontend dependencies
+              run: npm --prefix frontend ci
+            - name: Frontend lint
+              run: npm --prefix frontend run lint
+            - name: Frontend tests without DB
+              run: npm --prefix frontend run test:smoke
+            - name: Build frontend
+              run: npm --prefix frontend run build
+
