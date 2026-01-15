@@ -29,10 +29,19 @@ if (!config.NO_DB) {
   logger.info('NO_DB=true, skipping MongoDB connection')
 }
 
-
 app.use(express.json())
 app.use(middleware.requestLogger)
 app.use(middleware.tokenExtractor)
+
+const path = require('path')
+
+// serve Vite build
+app.use(express.static(path.join(__dirname, 'frontend', 'dist')))
+
+// SPA fallback (so refresh on / works)
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'frontend', 'dist', 'index.html'))
+})
 
 const dbReady = () => mongoose.connection.readyState === 1
 

@@ -4,6 +4,8 @@ on:
     push:
         branches: [main]
     pull_request:
+        branches: [main]
+        types: [opened, synchronize]
 
 jobs:
     pipeline:
@@ -30,4 +32,14 @@ jobs:
               run: npm --prefix frontend run test:smoke
             - name: Build frontend
               run: npm --prefix frontend run build
+    
+    deploy:
+      runs-on: ubuntu-latest
+      needs: pipeline
+      if: github.event_name == 'push' && github.ref == 'refs/heads/main' && !contains(toJson(github.event), '#skip')
+      steps:
+        - name: Deploy (Render)
+          env:
+            deploy_url: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
+          run: curl -fsS "$deploy_url"
 
