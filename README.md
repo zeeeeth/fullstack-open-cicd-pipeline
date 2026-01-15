@@ -1,0 +1,1 @@
+This repo is for testing the setting up of a CI/CD pipeline, the MongoDB database that the backend connects to has been deleted to keep this course free. 

@@ -43,3 +43,20 @@ jobs:
             deploy_url: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
           run: curl -fsS "$deploy_url"
 
+    tag_release:
+      runs-on: ubuntu-latest
+      needs: pipeline
+      steps:
+        - uses: actions/checkout@v4
+          with:
+            fetch-depth: 0
+        - name: Bump version and push tag
+          if: >-
+            ${{ github.event_name == 'push' &&
+                !contains(toJson(github.event), '#skip') }}
+          uses: anothrNick/github-tag-action@4ed44965e0db8dab2b466a16da04aec3cc312fd8
+          env:
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            WITH_V: true
+            DEFAULT_BUMP: patch
+
