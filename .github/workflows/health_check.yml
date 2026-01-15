@@ -1,0 +1,18 @@
+name: periodic health check
+
+on:
+    # schedule:
+    #     - cron: '0 0 * * *'  # Runs daily at midnight UTC
+    push:
+        branches: [main]
+
+jobs:
+    health_check:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Ping deployed service's URL
+              uses: jtalk/url-health-check-action@fc2fe2a9ca9c9734d992431b749b79350d771fbb
+              with:
+                url: ${{ secrets.DEPLOYED_SERVICE_URL }}
+                max-attempts: 5
+                retry-delay: 5s
